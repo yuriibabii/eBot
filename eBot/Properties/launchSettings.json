@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "eBot": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://5d1815ce8ea5.ngrok.io",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
