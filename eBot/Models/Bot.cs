@@ -25,7 +25,7 @@ namespace eBot.Models
             };
 
             botClient = new TelegramBotClient(AppSettings.Token);
-            await botClient.SetWebhookAsync(AppSettings.Url);
+            await botClient.SetWebhookAsync(AppSettings.NGrokUrl);
             return botClient;
         }
     }

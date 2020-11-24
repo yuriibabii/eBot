@@ -6,7 +6,8 @@ using Telegram.Bot.Types;
 namespace eBot.Controllers
 {
     [Route("/")]
-    public class UpdateController : Controller
+    [ApiController]
+    public class UpdateController : ControllerBase
     {
         [HttpPost]
         public async Task<OkResult> Post([FromBody]Update update)
