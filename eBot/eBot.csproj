@@ -5,9 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="17.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="Telegram.Bot" Version="15.7.1" />
   </ItemGroup>
 
-
+  <ItemGroup>
+    <None Remove="eBot Essential Vocabulary 3600 words .xlsx" />
+    <None Remove="essential_vocabulary.xlsx" />
+    <None Remove="essential_vocabulary.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="essential_vocabulary.csv" />
+  </ItemGroup>
 </Project>

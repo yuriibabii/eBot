@@ -1,6 +1,12 @@
+using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using eBot.Models;
-using IDM.SkPublish.API;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -8,10 +14,11 @@ namespace eBot
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            BuildWebHost(args).Run();
-            
+            var webHost = BuildWebHost(args);
+            await LoadEssentialVocabularySetAsync();
+            webHost.Run();
         }
 
         private static IWebHost BuildWebHost(string[] args) =>
@@ -21,9 +28,37 @@ namespace eBot
                 .UseStartup<Startup>()
                 .Build();
 
-        private static void DownloadEnglishDictionary()
+        private static Task LoadEssentialVocabularySetAsync()
         {
-            var api = new SkPublishAPI(AppSettings.CambridgeEnglishDictionaryBaseUrl, );
+            var loadTask = Task.Run(() =>
+            {
+                var stream = Assembly
+                    .GetExecutingAssembly()
+                    .GetManifestResourceStream(AppSettings.EssentialVocabularyName);
+                
+                var streamReader = new StreamReader(stream);
+                var csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    BadDataFound = OnBadDataFound,
+                };
+
+                var csvReader = new CsvReader(streamReader, csvConfiguration);
+                try
+                {
+                    var vocabularyElements = csvReader.GetRecords<VocabularyElement>().ToList();
+                }
+                catch (BadDataException exception)
+                {
+                    
+                }
+            });
+
+            return loadTask;
+        }
+
+        private static void OnBadDataFound(ReadingContext obj)
+        {
+            
         }
     }
 }
