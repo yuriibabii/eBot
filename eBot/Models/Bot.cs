@@ -7,8 +7,8 @@ namespace eBot.Models
 {
     public static class Bot
     {
-        private static TelegramBotClient botClient;
-        private static List<Command> commandsList;
+        private static TelegramBotClient? botClient;
+        private static List<Command> commandsList = null!;
 
         public static IReadOnlyList<Command> Commands => commandsList.AsReadOnly();
 
@@ -21,7 +21,10 @@ namespace eBot.Models
 
             commandsList = new List<Command>
             {
-                new StartCommand()
+                new StartCommand(),
+                new StudyNewCommand(),
+                new RepeatCommand(),
+                new HelpCommand()
             };
 
             botClient = new TelegramBotClient(AppSettings.TelegramBotToken);
