@@ -1,6 +1,8 @@
+using System;
 using System.Threading.Tasks;
-using eBot.Models;
+using eBot.Commands;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 
 namespace eBot.Controllers
@@ -10,30 +12,25 @@ namespace eBot.Controllers
     public class UpdateController : ControllerBase
     {
         [HttpPost]
-        public async Task<OkResult> Post([FromBody]Update? update)
+        public async Task<OkResult> Post(
+            [FromBody]Update? update,
+            [FromServices] IServiceProvider serviceProvider)
         {
-            if (update == null)
+            try
             {
-                return Ok();
-            }
-
-            var message = update.Message;
-            var botClient = await Bot.GetBotClientAsync();
-
-            var isCommandExecuted = false;
-            foreach (var command in Bot.Commands)
-            {
-                if (command.Contains(message))
+                if (update == null)
                 {
-                    await command.Execute(message, botClient);
-                    isCommandExecuted = true;
-                    break;
+                    return Ok();
                 }
-            }
 
-            if (isCommandExecuted == false)
+                var botClient = await Bot.GetBotClientAsync();
+                var commandToExecute = CommandsFactory.ProduceNewForUpdate(update, serviceProvider);
+                await commandToExecute.ExecuteAsync(update.Message, botClient);
+            }
+            catch (Exception e)
             {
-                
+                var logger = serviceProvider.GetService(typeof(ILogger<UpdateController>)) as ILogger<UpdateController>;
+                logger.Log(LogLevel.Critical, e.ToString());
             }
 
             return Ok();

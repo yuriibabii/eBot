@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using eBot.DbContexts;
 using eBot.Extensions;
+using eBot.Mappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,33 +11,37 @@ using Telegram.Bot.Types.Enums;
 
 namespace eBot.Commands
 {
-    public class RepeatCommand : Command, IPublicAvailableCommand
+    public class RepeatCommand : BotCommand, IPublicAvailableCommand
     {
+        public const string Name = Strings.Commands.Repeat;
+
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ILogger<StudyNewCommand> logger;
         
-        public RepeatCommand(IServiceScopeFactory serviceScopeFactory, ILogger<StudyNewCommand> logger)
+        public RepeatCommand(IServiceScopeFactory serviceScopeFactory)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
         }
         
-        public override string Name => Strings.Commands.Repeat;
-
         public string HumanReadableDescription => "Shows you a word to repeat.";
 
-        public override async Task Execute(Message message, TelegramBotClient botClient)
+        public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
             var chatId = message.Chat.Id;
-            var user = await studyContext.Users.FirstOrDefaultAsync(u => u.Id == chatId);
+            var user = await studyContext
+                .Users
+                .FirstOrNullAsync(u => u.Id == chatId)
+                .MapAsync(UserMapper.Map);
+            
             if (user == null)
             {
                 await botClient.SendTextMessageAsync(chatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
                 return;
             }
-
+            
             var rememberElement = user.ElementsInProgress.GetBestToRepeatElement();
             if (rememberElement == null)
             {

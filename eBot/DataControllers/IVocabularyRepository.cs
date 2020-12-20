@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace eBot.DataControllers
 {
-    public interface IVocabularyDataController
+    public interface IVocabularyRepository
     {
         Task LoadEssentialVocabularySetAsync();
     }

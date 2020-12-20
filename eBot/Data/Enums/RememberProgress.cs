@@ -1,4 +1,4 @@
-namespace eBot.Models
+namespace eBot.Data.Enums
 {
     public enum RememberProgress
     {

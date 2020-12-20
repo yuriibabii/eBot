@@ -1,25 +1,27 @@
 using System.Threading.Tasks;
 using eBot.DbContexts;
 using eBot.Extensions;
+using eBot.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using User = eBot.Data.Domain.User;
 
 namespace eBot.Commands
 {
-    public class StartCommand : Command
+    public class StartCommand : BotCommand
     {
+        public const string Name = Strings.Commands.Start;
+
         private readonly IServiceScopeFactory serviceScopeFactory;
 
         public StartCommand(IServiceScopeFactory serviceScopeFactory)
         {
             this.serviceScopeFactory = serviceScopeFactory;
         }
-        
-        public override string Name => Strings.Commands.Start;
 
-        public override async Task Execute(Message message, TelegramBotClient botClient)
+        public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
             var chatId = message.Chat.Id;
             await ShowUserSomeInformationAsync(botClient, chatId);
@@ -33,12 +35,9 @@ namespace eBot.Commands
             var currentUser = await studyContext.Users.FindAsync(chatId);
             if (currentUser == null)
             {
-                var newUser = new Models.User(chatId)
-                {
-                    LastCommand = this
-                };
-                
-                await studyContext.Users.AddAsync(newUser);
+                var user = new User(chatId);
+                var userDb = user.Map();
+                await studyContext.Users.AddAsync(userDb);
                 await studyContext.SaveChangesAsync();
             }
         }

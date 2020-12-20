@@ -1,8 +1,8 @@
-namespace eBot.Models
+namespace eBot
 {
     public static class AppSettings
     {
-        public const string NGrokUrl = "https://3ff67d78b425.ngrok.io";
+        public const string NGrokUrl = "https://605fa1ef2266.ngrok.io";
 
         public const string Name = "eBot";
 

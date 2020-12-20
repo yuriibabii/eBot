@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using eBot.Models;
+using eBot.Data.Domain;
 
 namespace eBot.Extensions
 {

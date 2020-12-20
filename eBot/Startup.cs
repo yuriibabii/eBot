@@ -1,6 +1,5 @@
 using eBot.DataControllers;
 using eBot.DbContexts;
-using eBot.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +47,7 @@ namespace eBot
 
         private static void RegisterDataControllers(IServiceCollection services)
         {
-            services.AddSingleton<IVocabularyDataController, VocabularyDataController>();
+            services.AddSingleton<IVocabularyRepository, VocabularyRepository>();
         }
 
         private void RegisterDbContexts(IServiceCollection services)

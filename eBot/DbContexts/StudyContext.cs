@@ -1,4 +1,4 @@
-using eBot.Models;
+using eBot.Data.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace eBot.DbContexts
@@ -7,9 +7,9 @@ namespace eBot.DbContexts
     {
         public StudyContext(DbContextOptions<StudyContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<UserDb> Users { get; set; } = null!;
 
-        public DbSet<VocabularyElement> Vocabulary { get; set; } = null!;
+        public DbSet<VocabularyElementDb> Vocabulary { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

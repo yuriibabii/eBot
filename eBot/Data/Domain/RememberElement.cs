@@ -1,7 +1,8 @@
 using System;
+using eBot.Data.Enums;
 using eBot.Extensions;
 
-namespace eBot.Models
+namespace eBot.Data.Domain
 {
     public class RememberElement
     {
@@ -12,7 +13,7 @@ namespace eBot.Models
         
         public VocabularyElement VocabularyElement { get; }
 
-        public int Id => VocabularyElement.Id;
+        public long Id => VocabularyElement.Id;
         
         public RememberProgress Progress { get; set; }
         

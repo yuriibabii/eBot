@@ -12,7 +12,7 @@ namespace eBot
         public static async Task Main(string[] args)
         {
             var webHost = BuildWebHost(args);
-            var vocabularyDataController = webHost.Services.Resolve<IVocabularyDataController>();
+            var vocabularyDataController = webHost.Services.Resolve<IVocabularyRepository>();
             await vocabularyDataController.LoadEssentialVocabularySetAsync();
             await webHost.RunAsync();
         }

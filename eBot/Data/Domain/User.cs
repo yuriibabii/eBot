@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using eBot.Commands;
 
-namespace eBot.Models
+namespace eBot.Data.Domain
 {
     public class User
     {
@@ -23,6 +23,6 @@ namespace eBot.Models
         
         public IList<int> CompletelyRememberedElements { get; }
         
-        public ICommand LastCommand { get; set; } 
+        public IBotCommand LastCommand { get; set; } 
     }
 }
