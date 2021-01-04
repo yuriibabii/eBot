@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using eBot.DbContexts;
 using eBot.Extensions;
 using eBot.Mappers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -16,9 +15,9 @@ namespace eBot.Commands
         public const string Name = Strings.Commands.Repeat;
 
         private readonly IServiceScopeFactory serviceScopeFactory;
-        private readonly ILogger<StudyNewCommand> logger;
+        private readonly ILogger<RepeatCommand> logger;
         
-        public RepeatCommand(IServiceScopeFactory serviceScopeFactory)
+        public RepeatCommand(IServiceScopeFactory serviceScopeFactory, ILogger<RepeatCommand> logger)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
@@ -34,17 +33,21 @@ namespace eBot.Commands
             var user = await studyContext
                 .Users
                 .FirstOrNullAsync(u => u.Id == chatId)
-                .MapAsync(UserMapper.Map);
+                .MapAsync(currentUser => currentUser.Map(studyContext));
             
             if (user == null)
             {
+                logger.LogError($"{nameof(user)} is null. Current user isn't found.");
                 await botClient.SendTextMessageAsync(chatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
                 return;
             }
+
+            user.LastCommand = this;
             
             var rememberElement = user.ElementsInProgress.GetBestToRepeatElement();
             if (rememberElement == null)
             {
+                logger.LogWarning($"{nameof(rememberElement)} is null. User have nothing to repeat.");
                 await botClient.SendTextMessageAsync(
                     chatId,
                     $"There is nothing to repeat for now. Please call {Strings.Commands.Study} to study a new word, or try later.",

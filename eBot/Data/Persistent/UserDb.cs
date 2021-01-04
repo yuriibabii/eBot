@@ -8,10 +8,12 @@ namespace eBot.Data.Persistent
     {
         public long Id { get; set; }
 
-        public IList<RememberElementDb> ElementsInProgress { get; set; } = null!;
+        public IList<RememberElementDb> ElementsInProgress { get; set; }
 
         public string CompletelyRememberedElements { get; set; } = null!;
 
-        public IBotCommand LastCommand { get; set; } = null!;
+        public string LastCommand { get; set; } = null!;
+
+        public string LastCommandTypeName { get; set; } = null!;
     }
 }

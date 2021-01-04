@@ -4,11 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using CsvHelper;
-using eBot.Data.Domain;
 using eBot.Data.Persistent;
 using eBot.DbContexts;
 using eBot.Extensions;
-using eBot.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

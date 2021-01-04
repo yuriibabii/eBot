@@ -25,21 +25,32 @@ namespace eBot.Commands
         {
             var chatId = message.Chat.Id;
             await ShowUserSomeInformationAsync(botClient, chatId);
-            await TrySaveUserAsync(chatId);
-        }
-
-        private async Task TrySaveUserAsync(long chatId)
-        {
+            
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
-            var currentUser = await studyContext.Users.FindAsync(chatId);
-            if (currentUser == null)
+            var userDb = await studyContext.Users.FindAsync(chatId);
+
+            if (userDb == null)
             {
-                var user = new User(chatId);
-                var userDb = user.Map();
-                await studyContext.Users.AddAsync(userDb);
-                await studyContext.SaveChangesAsync();
+                await TrySaveUserAsync(chatId, studyContext);
             }
+            else
+            {
+                await botClient.SendTextMessageAsync(chatId,
+                    $"Sorry, but you have already started {AppSettings.Name}. Enjoy!", ParseMode.Markdown);
+            }
+        }
+
+        private async Task TrySaveUserAsync(long chatId, StudyContext studyContext)
+        {
+            var user = new User(chatId)
+            {
+                LastCommand = this
+            };
+                
+            var userDb = user.Map();
+            await studyContext.Users.AddAsync(userDb);
+            await studyContext.SaveChangesAsync();
         }
 
         private async Task ShowUserSomeInformationAsync(TelegramBotClient botClient, long chatId)

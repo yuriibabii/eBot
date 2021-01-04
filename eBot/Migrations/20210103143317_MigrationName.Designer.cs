@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eBot.DbContexts;
 
 namespace eBot.Migrations
 {
     [DbContext(typeof(StudyContext))]
-    partial class StudyContextModelSnapshot : ModelSnapshot
+    [Migration("20210103143317_MigrationName")]
+    partial class MigrationName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,10 +54,6 @@ namespace eBot.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastCommand")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastCommandTypeName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

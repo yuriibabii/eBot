@@ -1,10 +1,8 @@
 using System.Threading.Tasks;
 using eBot.Data.Domain;
-using eBot.Data.Persistent;
 using eBot.DbContexts;
 using eBot.Extensions;
 using eBot.Mappers;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -33,16 +31,18 @@ namespace eBot.Commands
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
             var chatId = message.Chat.Id;
-            var user = await studyContext
+            var userDb = await studyContext
                 .Users
-                .FirstOrNullAsync(u => u.Id == chatId)
-                .MapAsync(UserMapper.Map);
+                .FirstOrNullAsync(u => u.Id == chatId);
             
-            if (user == null)
+            if (userDb == null)
             {
                 await botClient.SendTextMessageAsync(chatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
                 return;
             }
+
+            var user = userDb.Map(studyContext);
+            user.LastCommand = this;
             
             var newElementId = user.NextElementToStudyId;
             var newVocabularyElementDb = await studyContext.Vocabulary.FindAsync(newElementId);

@@ -32,7 +32,7 @@ namespace eBot.Controllers
                 var logger = serviceProvider.GetService(typeof(ILogger<UpdateController>)) as ILogger<UpdateController>;
                 logger.Log(LogLevel.Critical, e.ToString());
             }
-
+            
             return Ok();
         }
     }

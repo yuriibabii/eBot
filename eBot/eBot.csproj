@@ -32,6 +32,5 @@
     <None Remove="essential_vocabulary.csv" />
     <EmbeddedResource Include="essential_vocabulary.csv" />
     <None Remove="study.db" />
-    <EmbeddedResource Include="study.db" />
   </ItemGroup>
 </Project>
