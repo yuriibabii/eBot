@@ -26,7 +26,7 @@ namespace eBot.Mappers
         public static User Map(this UserDb user, StudyContext studyContext)
         {
             var completelyRememberedElements = JsonSerializer.Deserialize<IList<long>>(user.CompletelyRememberedElements);
-            var elementsInProgress = user.ElementsInProgress.Select(element =>
+            var elementsInProgress = user.ElementsInProgress?.Select(element =>
             {
                 var vocabularyElement = studyContext.Vocabulary.Find(element.VocabularyElementId);
                 var rememberElement = element.Map(vocabularyElement);

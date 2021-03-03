@@ -23,27 +23,28 @@ namespace eBot.Commands
 
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
-            var chatId = message.Chat.Id;
-            await ShowUserSomeInformationAsync(botClient, chatId);
+            await base.ExecuteAsync(message, botClient);
+            
+            await ShowUserSomeInformationAsync(botClient, ChatId);
             
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
-            var userDb = await studyContext.Users.FindAsync(chatId);
+            var userDb = await studyContext.Users.FindAsync(ChatId);
 
             if (userDb == null)
             {
-                await TrySaveUserAsync(chatId, studyContext);
+                await TrySaveUserAsync(ChatId, studyContext);
             }
             else
             {
-                await botClient.SendTextMessageAsync(chatId,
+                await botClient.SendTextMessageAsync(ChatId,
                     $"Sorry, but you have already started {AppSettings.Name}. Enjoy!", ParseMode.Markdown);
             }
         }
 
         private async Task TrySaveUserAsync(long chatId, StudyContext studyContext)
         {
-            var user = new User(chatId)
+            var user = new User(ChatId)
             {
                 LastCommand = this
             };

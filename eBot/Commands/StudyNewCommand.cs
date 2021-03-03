@@ -11,10 +11,11 @@ using Telegram.Bot.Types.Enums;
 
 namespace eBot.Commands
 {
-    public class StudyNewCommand : BotCommand, IPublicAvailableCommand
+    public class StudyNewCommand : BotCommand
     {
         public const string Name = Strings.Commands.Study;
-
+        public const string HumanReadableDescription = "Shows you a new word to study.";
+        
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ILogger<StudyNewCommand> logger;
         
@@ -23,21 +24,20 @@ namespace eBot.Commands
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
         }
-        
-        public string HumanReadableDescription => "Shows you a new word to study.";
 
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
+            await base.ExecuteAsync(message, botClient);
+            
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
-            var chatId = message.Chat.Id;
             var userDb = await studyContext
                 .Users
-                .FirstOrNullAsync(u => u.Id == chatId);
+                .FirstOrNullAsync(u => u.Id == ChatId);
             
             if (userDb == null)
             {
-                await botClient.SendTextMessageAsync(chatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(ChatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
                 return;
             }
 
@@ -49,14 +49,14 @@ namespace eBot.Commands
             if (newVocabularyElementDb == null)
             {
                 logger.LogError($"{nameof(newVocabularyElementDb)} is null. New word to study isn't found.");
-                await botClient.SendTextMessageAsync(chatId, $"New word to study isn't available. Please try later.", ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(ChatId, $"New word to study isn't available. Please try later.", ParseMode.Markdown);
                 return;
             }
 
             var vocabularyElement = newVocabularyElementDb.Map();
             var rememberElement = new RememberElement(vocabularyElement);
             user.ElementsInProgress.Add(rememberElement);
-            await botClient.SendTextMessageAsync(chatId, vocabularyElement.ToString(), ParseMode.Markdown);
+            await botClient.SendTextMessageAsync(ChatId, vocabularyElement.ToString(), ParseMode.Markdown);
             await studyContext.SaveChangesAsync();
         }
     }

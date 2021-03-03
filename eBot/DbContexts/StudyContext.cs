@@ -11,7 +11,7 @@ namespace eBot.DbContexts
 
         public DbSet<VocabularyElementDb> Vocabulary { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        protected override void OnConfiguring (DbContextOptionsBuilder options)
         {
         }
     }

@@ -10,8 +10,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace eBot.Commands
 {
-    public class RepeatCommand : BotCommand, IPublicAvailableCommand
+    public class RepeatCommand : BotCommand
     {
+        public const string HumanReadableDescription = "Shows you a word to repeat.";
         public const string Name = Strings.Commands.Repeat;
 
         private readonly IServiceScopeFactory serviceScopeFactory;
@@ -23,22 +24,21 @@ namespace eBot.Commands
             this.logger = logger;
         }
         
-        public string HumanReadableDescription => "Shows you a word to repeat.";
-
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
+            await base.ExecuteAsync(message, botClient);
+            
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
-            var chatId = message.Chat.Id;
             var user = await studyContext
                 .Users
-                .FirstOrNullAsync(u => u.Id == chatId)
+                .FirstOrNullAsync(u => u.Id == ChatId)
                 .MapAsync(currentUser => currentUser.Map(studyContext));
             
             if (user == null)
             {
                 logger.LogError($"{nameof(user)} is null. Current user isn't found.");
-                await botClient.SendTextMessageAsync(chatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
+                await botClient.SendTextMessageAsync(ChatId, $"Please run {Strings.Commands.Start} first!", ParseMode.Markdown);
                 return;
             }
 
@@ -49,13 +49,13 @@ namespace eBot.Commands
             {
                 logger.LogWarning($"{nameof(rememberElement)} is null. User have nothing to repeat.");
                 await botClient.SendTextMessageAsync(
-                    chatId,
-                    $"There is nothing to repeat for now. Please call {Strings.Commands.Study} to study a new word, or try later.",
+                    ChatId,
+                    $"There is nothing to repeat for now. Please click {Strings.Commands.Study} to study a new word, or try later.",
                     ParseMode.Markdown);
                 return;
             }
             
-            await botClient.SendTextMessageAsync(chatId, rememberElement.ToString(), ParseMode.Markdown);
+            await botClient.SendTextMessageAsync(ChatId, rememberElement.ToString(), ParseMode.Markdown);
             await studyContext.SaveChangesAsync();
         }
     }

@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -13,15 +12,17 @@ namespace eBot.Commands
         
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
-            var messageBuilder = new StringBuilder("Commands which you would like to use:");
+            await base.ExecuteAsync(message, botClient);
+            
+            var messageBuilder = new StringBuilder("Commands which you can use:\n");
 
-            // var publicAvailableCommands = Bot.Commands.OfType<IPublicAvailableCommand>();
-            // foreach (var command in publicAvailableCommands)
-            // {
-            //     messageBuilder.AppendLine($"{command.Name} - {command.HumanReadableDescription}");
-            // }
-            //
-            // await botClient.SendTextMessageAsync(ChatId, messageBuilder.ToString(), ParseMode.Markdown);
+            var publicCommandsStrings = CommandsFactory.GetPublicCommandsStrings();
+            foreach (var (name, humanReadableDescription) in publicCommandsStrings)
+            {
+                messageBuilder.AppendLine($"{name} - {humanReadableDescription}");
+            }
+            
+            await botClient.SendTextMessageAsync(ChatId, messageBuilder.ToString(), ParseMode.Markdown);
         }
     }
 }

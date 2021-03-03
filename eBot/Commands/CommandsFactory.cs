@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,12 @@ namespace eBot.Commands
 {
     public static class CommandsFactory
     {
+        public static IEnumerable<(string Name, string HumanReadableDescription)> GetPublicCommandsStrings()
+        {
+            yield return (StudyNewCommand.Name, StudyNewCommand.HumanReadableDescription);
+            yield return (RepeatCommand.Name, RepeatCommand.HumanReadableDescription);
+        }
+        
         public static IBotCommand? DeserializeCommandByName(this string serializedCommand, string commandTypeName)
         {
             return commandTypeName switch

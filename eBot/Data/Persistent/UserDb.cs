@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using eBot.Commands;
-using eBot.Data.Domain;
 
 namespace eBot.Data.Persistent
 {
@@ -8,7 +6,7 @@ namespace eBot.Data.Persistent
     {
         public long Id { get; set; }
 
-        public IList<RememberElementDb> ElementsInProgress { get; set; }
+        public IList<RememberElementDb>? ElementsInProgress { get; set; }
 
         public string CompletelyRememberedElements { get; set; } = null!;
 
