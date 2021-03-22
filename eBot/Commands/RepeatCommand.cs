@@ -13,28 +13,29 @@ namespace eBot.Commands
     public class RepeatCommand : BotCommand
     {
         public const string HumanReadableDescription = "Shows you a word to repeat.";
-        public const string Name = Strings.Commands.Repeat;
+        //public const string Name = Strings.Commands.Repeat;
 
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ILogger<RepeatCommand> logger;
-        
+
         public RepeatCommand(IServiceScopeFactory serviceScopeFactory, ILogger<RepeatCommand> logger)
+            : base(serviceScopeFactory)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
         }
-        
+
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
             await base.ExecuteAsync(message, botClient);
-            
+
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
             var user = await studyContext
                 .Users
                 .FirstOrNullAsync(u => u.Id == ChatId)
                 .MapAsync(currentUser => currentUser.Map(studyContext));
-            
+
             if (user == null)
             {
                 logger.LogError($"{nameof(user)} is null. Current user isn't found.");
@@ -43,7 +44,7 @@ namespace eBot.Commands
             }
 
             user.LastCommand = this;
-            
+
             var rememberElement = user.ElementsInProgress.GetBestToRepeatElement();
             if (rememberElement == null)
             {
@@ -54,7 +55,7 @@ namespace eBot.Commands
                     ParseMode.Markdown);
                 return;
             }
-            
+
             await botClient.SendTextMessageAsync(ChatId, rememberElement.ToString(), ParseMode.Markdown);
             await studyContext.SaveChangesAsync();
         }

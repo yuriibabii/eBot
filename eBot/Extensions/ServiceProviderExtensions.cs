@@ -7,7 +7,7 @@ namespace eBot.Extensions
         public static TType Resolve<TType>(this IServiceProvider serviceProvider)
         {
             var instance = serviceProvider.GetService(typeof(TType));
-            return (TType) instance;
+            return (TType)instance;
         }
     }
 }

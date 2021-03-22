@@ -6,7 +6,7 @@ namespace eBot
         {
             public const string Start = @"/start";
             public const string Help = @"/help";
-            public const string Repeat = @"/repeat";
+            public const string Settings = @"/settings";
             public const string Study = @"/study";
         }
     }

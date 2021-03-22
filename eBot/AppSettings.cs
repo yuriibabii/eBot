@@ -2,7 +2,7 @@ namespace eBot
 {
     public static class AppSettings
     {
-        public const string NGrokUrl = "https://2bc69c08939b.ngrok.io";
+        public const string NGrokUrl = "https://0ccb38f03349.ngrok.io";
 
         public const string Name = "eBot";
 

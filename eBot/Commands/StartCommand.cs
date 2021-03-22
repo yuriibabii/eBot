@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using eBot.DbContexts;
 using eBot.Extensions;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = eBot.Data.Domain.User;
 
 namespace eBot.Commands
@@ -14,19 +16,18 @@ namespace eBot.Commands
     {
         public const string Name = Strings.Commands.Start;
 
-        private readonly IServiceScopeFactory serviceScopeFactory;
 
         public StartCommand(IServiceScopeFactory serviceScopeFactory)
+            : base(serviceScopeFactory)
         {
-            this.serviceScopeFactory = serviceScopeFactory;
         }
 
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
             await base.ExecuteAsync(message, botClient);
-            
+
             await ShowUserSomeInformationAsync(botClient, ChatId);
-            
+
             using var serviceScope = serviceScopeFactory.CreateScope();
             var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
             var userDb = await studyContext.Users.FindAsync(ChatId);
@@ -38,17 +39,17 @@ namespace eBot.Commands
             else
             {
                 await botClient.SendTextMessageAsync(ChatId,
-                    $"Sorry, but you have already started {AppSettings.Name}. Enjoy!", ParseMode.Markdown);
+                    $"You can't start {AppSettings.Name} more than once. Use {HelpCommand.Name} to get more info.", ParseMode.Markdown);
             }
         }
 
         private async Task TrySaveUserAsync(long chatId, StudyContext studyContext)
         {
-            var user = new User(ChatId)
+            var user = new User(chatId)
             {
                 LastCommand = this
             };
-                
+
             var userDb = user.Map();
             await studyContext.Users.AddAsync(userDb);
             await studyContext.SaveChangesAsync();
@@ -57,17 +58,32 @@ namespace eBot.Commands
         private async Task ShowUserSomeInformationAsync(TelegramBotClient botClient, long chatId)
         {
             await botClient.SendTextMessageAsync(chatId,
-                @"Hello! We are here about to start learning Essential English Vocabulary,
-which consist from 3600 words. These words are sorted by difficulty from easy to hard.", ParseMode.Markdown);
-            
+                $"Hello! {AppSettings.Name} will help you to study English! To learn new words you will use Spaced Repetition technique. There are two options how to study:" + Environment.NewLine +
+                "1. Add your own words and phrases." + Environment.NewLine +
+                "2. Use Essential English Vocabulary which consist from 3600 words. They sorted by difficulty from easy to hard.",
+                ParseMode.Markdown, replyMarkup: new ReplyKeyboardMarkup(new[] {
+                    new[]
+                    {
+                        new KeyboardButton("Study"),
+                        new KeyboardButton("My progress"),
+                    },
+                    new[]
+                    {
+                        new KeyboardButton("Settings"),
+                        new KeyboardButton("Help")
+                    }
+                }));
+
+
+            await Task.Delay(Constants.MessageSendDelay);
+
             await botClient.SendTextMessageAsync(chatId,
-                $"To study a new word, press {Strings.Commands.Study}.", ParseMode.Markdown);
-            
+                $"To study a new word, send {Strings.Commands.Study} or press the button on the menu.", ParseMode.Markdown);
+
+            await Task.Delay(Constants.MessageSendDelay);
+
             await botClient.SendTextMessageAsync(chatId,
-                $"To repeat a word that you studied, press {Strings.Commands.Repeat}.", ParseMode.Markdown);
-            
-            await botClient.SendTextMessageAsync(chatId,
-                $"If you need some help, press {Strings.Commands.Help}.", ParseMode.Markdown);
+                $"If you need some help, send {Strings.Commands.Help} or press the button on the menu.", ParseMode.Markdown);
         }
     }
 }
