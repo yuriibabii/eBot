@@ -64,13 +64,13 @@ namespace eBot.Commands
                 ParseMode.Markdown, replyMarkup: new ReplyKeyboardMarkup(new[] {
                     new[]
                     {
-                        new KeyboardButton("Study"),
-                        new KeyboardButton("My progress"),
+                        new KeyboardButton($"📖 {Strings.Commands.StudyName}"),
+                        new KeyboardButton($"🚀 {Strings.Commands.MyProgress}"),
                     },
                     new[]
                     {
-                        new KeyboardButton("Settings"),
-                        new KeyboardButton("Help")
+                        new KeyboardButton($"⚙️ {Strings.Commands.SettingsName}"),
+                        new KeyboardButton($"❓ {Strings.Commands.HelpName}")
                     }
                 }));
 
