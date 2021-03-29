@@ -7,22 +7,22 @@ namespace eBot.Data.Domain
     {
         public User(
             long id,
-            IList<RememberElement>? elementsInProgress = default,
+            IList<IStudyElement>? elementsInProgress = default,
             IList<long>? completelyRememberedElements = default)
         {
             Id = id;
-            ElementsInProgress = elementsInProgress ?? new List<RememberElement>();
+            ElementsInProgress = elementsInProgress ?? new List<IStudyElement>();
             CompletelyRememberedElements = completelyRememberedElements ?? new List<long>();
         }
-        
+
         public long Id { get; }
 
         public long NextElementToStudyId => ElementsInProgress.Count + CompletelyRememberedElements.Count + 1;
-        
-        public IList<RememberElement> ElementsInProgress { get; }
-        
+
+        public IList<IStudyElement> ElementsInProgress { get; }
+
         public IList<long> CompletelyRememberedElements { get; }
-        
-        public IBotCommand? LastCommand { get; set; } 
+
+        public IBotCommand? LastCommand { get; set; }
     }
 }

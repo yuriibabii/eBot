@@ -54,7 +54,7 @@ namespace eBot.Commands
             }
 
             var vocabularyElement = newVocabularyElementDb.Map();
-            var rememberElement = new RememberElement(vocabularyElement);
+            var rememberElement = new VocabStudyElement(vocabularyElement);
             user.ElementsInProgress.Add(rememberElement);
             await botClient.SendTextMessageAsync(ChatId, vocabularyElement.ToString(), ParseMode.Markdown);
             await studyContext.SaveChangesAsync();

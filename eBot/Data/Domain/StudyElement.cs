@@ -4,26 +4,28 @@ using eBot.Extensions;
 
 namespace eBot.Data.Domain
 {
-    public class RememberElement
+    public class VocabStudyElement : IStudyElement
     {
-        public RememberElement(VocabularyElement vocabularyElement)
+        public VocabStudyElement(VocabularyElement vocabularyElement)
         {
             VocabularyElement = vocabularyElement;
         }
-        
+
         public VocabularyElement VocabularyElement { get; }
 
         public long Id => VocabularyElement.Id;
-        
+
         public RememberProgress Progress { get; set; }
-        
+
         public DateTimeOffset LastTimeRepeated { get; set; }
 
-        public string DefinitionWithoutWord => 
+        public string DefinitionWithoutWord =>
             VocabularyElement.Definition.ReplaceWordWithUnderscore(VocabularyElement.Word);
 
-        public string ExampleWithoutWord => 
+        public string ExampleWithoutWord =>
             VocabularyElement.Example.ReplaceWordWithUnderscore(VocabularyElement.Word);
+
+        public string Word => VocabularyElement.Word;
 
         public override string ToString()
         {

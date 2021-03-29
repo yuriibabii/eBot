@@ -38,6 +38,7 @@ namespace eBot.Commands
             }
             else
             {
+                //TODO: Rethink what we should do if bot was restarted
                 await botClient.SendTextMessageAsync(ChatId,
                     $"You can't start {AppSettings.Name} more than once. Use {HelpCommand.Name} to get more info.", ParseMode.Markdown);
             }

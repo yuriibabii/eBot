@@ -5,7 +5,7 @@ namespace eBot.Mappers
 {
     public static class RememberElementMapper
     {
-        public static RememberElementDb Map(this RememberElement rememberElement)
+        public static RememberElementDb Map(this VocabStudyElement rememberElement)
         {
             return new RememberElementDb
             {
@@ -16,9 +16,9 @@ namespace eBot.Mappers
             };
         }
         
-        public static RememberElement Map(this RememberElementDb rememberElement, VocabularyElementDb vocabularyElementDb)
+        public static VocabStudyElement Map(this RememberElementDb rememberElement, VocabularyElementDb vocabularyElementDb)
         {
-            return new RememberElement(vocabularyElementDb.Map())
+            return new VocabStudyElement(vocabularyElementDb.Map())
             {
                 LastTimeRepeated = rememberElement.LastTimeRepeated,
                 Progress = rememberElement.Progress

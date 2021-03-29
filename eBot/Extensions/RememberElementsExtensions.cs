@@ -6,7 +6,7 @@ namespace eBot.Extensions
 {
     public static class RememberElementsExtensions
     {
-        public static RememberElement? GetBestToRepeatElement(this IEnumerable<RememberElement> rememberElements)
+        public static VocabStudyElement? GetBestToRepeatElement(this IEnumerable<VocabStudyElement> rememberElements)
         {
             var bestToLearnElement = rememberElements.OrderBy(element => element.Progress)
                 .ThenBy(element => element.LastTimeRepeated)
