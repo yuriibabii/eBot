@@ -3,6 +3,7 @@ using eBot.Data.Domain;
 using eBot.DbContexts;
 using eBot.Extensions;
 using eBot.Mappers;
+using eBot.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -17,11 +18,14 @@ namespace eBot.Commands
         public const string HumanReadableDescription = "Shows you a new word to study.";
 
         private readonly ILogger<StudyNewCommand> logger;
+        private readonly IUserRepository userRepository;
 
         public StudyNewCommand(IServiceScopeFactory serviceScopeFactory, ILogger<StudyNewCommand> logger)
             : base(serviceScopeFactory)
         {
             this.logger = logger;
+            var scope = serviceScopeFactory.CreateScope();
+            userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
         }
 
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)

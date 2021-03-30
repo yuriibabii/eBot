@@ -15,13 +15,11 @@ namespace eBot.Commands
         public const string HumanReadableDescription = "Shows you a word to repeat.";
         //public const string Name = Strings.Commands.Repeat;
 
-        private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ILogger<RepeatCommand> logger;
 
         public RepeatCommand(IServiceScopeFactory serviceScopeFactory, ILogger<RepeatCommand> logger)
             : base(serviceScopeFactory)
         {
-            this.serviceScopeFactory = serviceScopeFactory;
             this.logger = logger;
         }
 
@@ -45,19 +43,19 @@ namespace eBot.Commands
 
             user.LastCommand = this;
 
-            var rememberElement = user.ElementsInProgress.GetBestToRepeatElement();
-            if (rememberElement == null)
-            {
-                logger.LogWarning($"{nameof(rememberElement)} is null. User have nothing to repeat.");
-                await botClient.SendTextMessageAsync(
-                    ChatId,
-                    $"There is nothing to repeat for now. Please click {Strings.Commands.Study} to study a new word, or try later.",
-                    ParseMode.Markdown);
-                return;
-            }
+            //var rememberElement = user.ElementsInProgress.GetBestToRepeatElement();
+            //if (rememberElement == null)
+            //{
+            //    logger.LogWarning($"{nameof(rememberElement)} is null. User have nothing to repeat.");
+            //    await botClient.SendTextMessageAsync(
+            //        ChatId,
+            //        $"There is nothing to repeat for now. Please click {Strings.Commands.Study} to study a new word, or try later.",
+            //        ParseMode.Markdown);
+            //    return;
+            //}
 
-            await botClient.SendTextMessageAsync(ChatId, rememberElement.ToString(), ParseMode.Markdown);
-            await studyContext.SaveChangesAsync();
+            //await botClient.SendTextMessageAsync(ChatId, rememberElement.ToString(), ParseMode.Markdown);
+            //await studyContext.SaveChangesAsync();
         }
     }
 }

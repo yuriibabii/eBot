@@ -1,5 +1,5 @@
-using eBot.DataControllers;
 using eBot.DbContexts;
+using eBot.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,29 +25,30 @@ namespace eBot
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app
                 .UseRouting()
                 .UseMvc();
-            
+
             Bot.GetBotClientAsync().Wait();
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddMvc()
                 .AddMvcOptions(ApplyMvcOptions);
-            
+
             services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson();
-            RegisterDataControllers(services);
             RegisterDbContexts(services);
+            RegisterRepositories(services);
         }
 
-        private static void RegisterDataControllers(IServiceCollection services)
+        private static void RegisterRepositories(IServiceCollection services)
         {
             services.AddSingleton<IVocabularyRepository, VocabularyRepository>();
+            services.AddSingleton<IUserRepository, UserRepository>();
         }
 
         private void RegisterDbContexts(IServiceCollection services)

@@ -1,40 +1,35 @@
 using System;
 using System.Threading.Tasks;
-using eBot.DbContexts;
-using eBot.Extensions;
-using eBot.Mappers;
+using eBot.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using User = eBot.Data.Domain.User;
 
 namespace eBot.Commands
 {
     public class StartCommand : BotCommand
     {
         public const string Name = Strings.Commands.Start;
-
+        private readonly IUserRepository userRepository;
 
         public StartCommand(IServiceScopeFactory serviceScopeFactory)
             : base(serviceScopeFactory)
         {
+            var scope = serviceScopeFactory.CreateScope();
+            userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
         }
 
         public override async Task ExecuteAsync(Message message, TelegramBotClient botClient)
         {
             await base.ExecuteAsync(message, botClient);
 
-            await ShowUserSomeInformationAsync(botClient, ChatId);
-
-            using var serviceScope = serviceScopeFactory.CreateScope();
-            var studyContext = serviceScope.ServiceProvider.Resolve<StudyContext>();
-            var userDb = await studyContext.Users.FindAsync(ChatId);
-
-            if (userDb == null)
+            var user = await userRepository.GetUserAsync(ChatId);
+            if (user == null)
             {
-                await TrySaveUserAsync(ChatId, studyContext);
+                await ShowUserSomeInformationAsync(botClient, ChatId);
+                await userRepository.SaveNewUserAsync(ChatId);
             }
             else
             {
@@ -42,18 +37,6 @@ namespace eBot.Commands
                 await botClient.SendTextMessageAsync(ChatId,
                     $"You can't start {AppSettings.Name} more than once. Use {HelpCommand.Name} to get more info.", ParseMode.Markdown);
             }
-        }
-
-        private async Task TrySaveUserAsync(long chatId, StudyContext studyContext)
-        {
-            var user = new User(chatId)
-            {
-                LastCommand = this
-            };
-
-            var userDb = user.Map();
-            await studyContext.Users.AddAsync(userDb);
-            await studyContext.SaveChangesAsync();
         }
 
         private async Task ShowUserSomeInformationAsync(TelegramBotClient botClient, long chatId)

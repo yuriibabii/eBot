@@ -33,4 +33,7 @@
     <EmbeddedResource Include="essential_vocabulary.csv" />
     <None Remove="study.db" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
 </Project>

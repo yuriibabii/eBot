@@ -26,12 +26,6 @@ namespace eBot.Controllers
                 }
 
                 var logger = serviceProvider.Resolve<ILogger<UpdateController>>();
-                logger.Log(LogLevel.Information, "callback query --- " + update.CallbackQuery?.Message?.Text);
-                logger.Log(LogLevel.Information, "inline query ---" + update.InlineQuery?.Query);
-                logger.Log(LogLevel.Information, "inline result ---" + update.ChosenInlineResult?.Query);
-                logger.Log(LogLevel.Information, "message text ---" + update.Message?.Text);
-                logger.Log(LogLevel.Information, "message type ---" + Enum.GetName(typeof(MessageType), update.Message?.Type));
-
                 var botClient = await Bot.GetBotClientAsync();
                 var commandToExecute = CommandsFactory.ProduceNewForUpdate(update, serviceProvider);
                 await commandToExecute.ExecuteAsync(update.Message, botClient);

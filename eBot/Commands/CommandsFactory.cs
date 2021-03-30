@@ -27,6 +27,11 @@ namespace eBot.Commands
 
         public static IBotCommand ProduceNewForUpdate(Update update, IServiceProvider serviceProvider)
         {
+            if (update.Type == UpdateType.Unknown)
+            {
+                // TODO: Stop bot for this user
+            }
+
             if (update.Type != UpdateType.Message)
             {
                 return CreateHelpCommand(serviceProvider);

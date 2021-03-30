@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace eBot.DataControllers
+namespace eBot.Repositories
 {
     public interface IVocabularyRepository
     {

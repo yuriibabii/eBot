@@ -10,19 +10,19 @@ using eBot.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace eBot.DataControllers
+namespace eBot.Repositories
 {
     public class VocabularyRepository : IVocabularyRepository
     {
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ILogger<VocabularyRepository> logger;
-        
+
         public VocabularyRepository(IServiceScopeFactory serviceScopeFactory, ILogger<VocabularyRepository> logger)
         {
             this.logger = logger;
             this.serviceScopeFactory = serviceScopeFactory;
         }
-        
+
         public async Task LoadEssentialVocabularySetAsync()
         {
             using var serviceScope = serviceScopeFactory.CreateScope();
@@ -31,7 +31,7 @@ namespace eBot.DataControllers
             {
                 return;
             }
-            
+
             await using var stream = Assembly
                 .GetExecutingAssembly()
                 .GetManifestResourceStream(AppSettings.EssentialVocabularyName);
@@ -40,14 +40,14 @@ namespace eBot.DataControllers
             {
                 return;
             }
-            
+
             using var streamReader = new StreamReader(stream);
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
             try
             {
                 var vocabularyElementsDb = csvReader
                     .GetRecords<VocabularyElementDb>();
-                
+
                 await studyContext.Vocabulary.AddRangeAsync(vocabularyElementsDb);
                 await studyContext.SaveChangesAsync();
             }

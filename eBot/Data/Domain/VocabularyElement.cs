@@ -14,7 +14,7 @@ namespace eBot.Data.Domain
         }
 
         public long Id { get; }
-        
+
         public string Word { get; }
 
         public string Transcription { get; }
@@ -23,7 +23,7 @@ namespace eBot.Data.Domain
 
         public string Example { get; }
 
-        public override string ToString() => 
+        public override string ToString() =>
             $"{Word} - [{Transcription}]{Environment.NewLine}Definition: {Definition}{Environment.NewLine}Example: {Example}";
     }
 }

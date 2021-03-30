@@ -23,6 +23,7 @@ namespace eBot.Data.Domain
 
         public IList<long> CompletelyRememberedElements { get; }
 
+        //TODO: Doesn't work now
         public IBotCommand? LastCommand { get; set; }
     }
 }

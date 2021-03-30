@@ -17,23 +17,23 @@ namespace eBot.Mappers
             {
                 Id = user.Id,
                 LastCommand = JsonSerializer.Serialize(user.LastCommand),
-                LastCommandTypeName =  user.LastCommand?.GetType().Name,
-                ElementsInProgress = user.ElementsInProgress.Map(RememberElementMapper.Map).ToList(),
+                //LastCommandTypeName =  user.LastCommand?.GetType().Name,
+                //ElementsInProgress = user.ElementsInProgress.Map(RememberElementMapper.Map).ToList(),
                 CompletelyRememberedElements = JsonSerializer.Serialize(user.CompletelyRememberedElements)
             };
         }
-        
+
         public static User Map(this UserDb user, StudyContext studyContext)
         {
             var completelyRememberedElements = JsonSerializer.Deserialize<IList<long>>(user.CompletelyRememberedElements);
             var elementsInProgress = user.ElementsInProgress?.Select(element =>
             {
                 var vocabularyElement = studyContext.Vocabulary.Find(element.VocabularyElementId);
-                var rememberElement = element.Map(vocabularyElement);
+                var rememberElement = element.Map(vocabularyElement) as IStudyElement;
                 return rememberElement;
             })
                 .ToList();
-            
+
             return new User(user.Id, elementsInProgress, completelyRememberedElements)
             {
                 LastCommand = user.LastCommand.DeserializeCommandByName(user.LastCommandTypeName)!
